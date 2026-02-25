@@ -12,12 +12,14 @@ pipeline {
             }
         }
 
-        stage("Build & Push Image") {
+         stage("Build & Push Image") {
             steps {
                 sh '''
-                chmod +x mvnw
-
-                ./mvnw package -DskipTests \
+                    ./mvnw quarkus:add-extension \
+                    -Dextensions="container-image-jib"
+                '''
+                sh '''
+                    ./mvnw package -DskipTests \
                     -Dquarkus.jib.base-jvm-image=quay.io/redhattraining/do400-java-alpine-openjdk11-jre:latest \
                     -Dquarkus.container-image.build=true \
                     -Dquarkus.container-image.registry=quay.io \
@@ -31,7 +33,6 @@ pipeline {
                 '''
             }
         }
-        
     }
     
 }
